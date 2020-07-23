@@ -2,6 +2,7 @@
 
 <p align="center"> <img src="assets/project_architecture.png"> </p>
 
+### Project description
 
 This project attempts to build a multi-container web and pipeline to test and deploy it. Nginx is used as a web server, React is used as a frontend server, express is used as a backend server to route requests to redis, postgres, and a worker node that runs a mathematical function. 
 

@@ -1,0 +1,38 @@
+sudo: required
+language: generic
+
+services:
+    - docker
+
+before_install:
+    - docker build -t smohajer85/react-express-app-test -f ./client/Dockerfile.dev ./client
+
+
+script:
+    - docker run -e CI=true smohajer85/react-express-app-test npm run test
+
+after_success:
+    - docker build -t smohajer85/react-express-client ./client
+    - docker build -t smohajer85/react-express-nginx ./nginx
+    - docker build -t smohajer85/react-express-server ./server
+    - docker build -t smohajer85/react-express-worker ./worker
+    # log in to the docker cli
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+    # take the images and push them to docker hub
+    - docker push smohajer85/react-express-client
+    - docker push smohajer85/react-express-nginx 
+    - docker push smohajer85/react-express-server
+    - docker push smohajer85/react-express-worker
+
+
+# deploy:
+#     provider: elasticbeanstalk
+#     region: "us-west-2"
+#     app: "react-express-app"
+#     env: "DockerReact-env"
+#     bucket_name: "elasticbeanstalk-us-west-2-182342662741"
+#     bucket_path: "react-express-app"
+#     on:
+#         branch: master
+#     access_key_id: $AWS_ACCESS_KEY
+#     secret_access_key: $AWS_SECRET_KEY
